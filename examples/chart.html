@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <div id="app"></div>
+    <script src="../dist/charts/base.js"></script>
+    <script>
+        window.onload = function() {
+            const chart = new window.chart.Chart.Canvas({
+                width: window.innerWidth - 40,
+                height: 200,
+                container: "#app",
+                styles: {
+                    border: "1px solid #ddd"
+                }
+            });
+
+            chart.drawDashLine({
+                start: {
+                    x: 1, y:0
+                },
+                end: {
+                    x: 1, y: 160,
+                },
+                segments: [10, 5],
+                color: "red"
+            })
+
+            chart.drawDashLine({
+                start: {
+                    x: 1, y:0
+                },
+                end: {
+                    x: 200, y: 160,
+                },
+                segments: [10, 5],
+                color: "blue"
+            })
+
+            
+            chart.drawDashLine({
+                start: {
+                    x: 100, y:100
+                },
+                end: {
+                    x: 115, y: 100,
+                },
+                segments: [10, 5],
+                color: "black",
+                width: 10
+            })
+
+        }
+
+    </script>
+</body>
+</html>

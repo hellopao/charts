@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script src="../../dist/charts/stockChart.js"></script>
+    <script>
+        // 分时
+        function loadTimeLineData(res) {
+            var prices = [], avgPrices = [], volumes = [], times = [];
+            res.chartlist.map(item => {
+                prices.push(item.current);
+                avgPrices.push(item.avg_price);
+                volumes.push(item.volume);
+                times.push(item.time);
+            })
+            new chart.TimeLine({
+                width: window.innerWidth - 40,
+                height: 200,
+                styles: {
+                    padding: "5px"
+                },
+                container: document.querySelector('#id1d'), 
+                priceTextOffsetX: 0,
+                volumeTextOffsetX: window.innerWidth - 80,
+                tradeHours: 5.5,
+                priceGrid: {
+                    origin: {x: 40, y: 0},
+                    width: window.innerWidth - 80,
+                    height: 120
+                },
+                volumeGrid: {
+                    origin: {x: 40, y: 130},
+                    width: window.innerWidth - 80,
+                    height: 60
+                },
+                dataSet: {
+                    prices, avgPrices, volumes, lastClosePrice: window.lastClosePrice, times
+                }
+            })
+
+        }
+
+        // 5日 
+        function loadFiveDaysTimeLineData(res) {
+            var prices = [], avgPrices = [], volumes = [], times = [];
+            res.chartlist.map(item => {
+                prices.push(item.current);
+                avgPrices.push(item.avg_price);
+                volumes.push(item.volume);
+                times.push(item.time);
+            })
+            new chart.TimeLine({
+                width: window.innerWidth - 40,
+                height: 200,
+                styles: {
+                    padding: "5px"
+                },
+                container: document.querySelector('#id5d'), 
+                priceTextOffsetX: 0,
+                volumeTextOffsetX: window.innerWidth - 80,
+                tradeHours: 5.5,
+                days: 5,
+                timeInterval: 10,
+                priceGrid: {
+                    origin: {x: 40, y: 0},
+                    width: window.innerWidth - 80,
+                    height: 120
+                },
+                volumeGrid: {
+                    origin: {x: 40, y: 130},
+                    width: window.innerWidth - 80,
+                    height: 60
+                },
+                dataSet: {
+                    prices, avgPrices, volumes, lastClosePrice: window.lastClosePrice, times
+                }
+            })
+
+        }
+
+        // 日k
+        function loadKLineData(res) {
+            var maPrices = {
+                ma5: [], ma10: [], ma20: []
+            }, ohlcPrices = [], volumes = [];
+
+            res.chartlist.map(item => {
+                ohlcPrices.push({
+                    o: item.open,
+                    h: item.high,
+                    l: item.low,
+                    c: item.close
+                });
+
+                volumes.push(item.volume);
+
+                Object.keys(maPrices).forEach(ma => {
+                    maPrices[ma].push(item[ma]);
+                })
+            });
+
+            new chart.KLine({
+                width: window.innerWidth - 40,
+                height: 220,
+                styles: {
+                    padding: "5px"
+                },
+                container: document.querySelector('#id1day'), 
+                legend: {x: 0, y: 0},
+                priceGrid: {
+                    origin: {x: 0, y: 20},
+                    width: window.innerWidth - 80,
+                    height: 120
+                },
+                volumeGrid: {
+                    origin: {x: 0, y: 150},
+                    width: window.innerWidth - 80,
+                    height: 60
+                },
+                priceTextOffsetX: window.innerWidth - 75,
+                dataSet: {
+                    maPrices, ohlcPrices, volumes
+                }
+             })
+        }
+
+        // 周k
+        function loadWeekKLineData(res) {
+            var maPrices = {
+                ma5: [], ma10: [], ma20: [], ma30: []
+            }, ohlcPrices = [], volumes = [];
+
+            res.chartlist.map(item => {
+                ohlcPrices.push({
+                    o: item.open,
+                    h: item.high,
+                    l: item.low,
+                    c: item.close
+                });
+
+                volumes.push(item.volume);
+
+                Object.keys(maPrices).forEach(ma => {
+                    maPrices[ma].push(item[ma]);
+                })
+            });
+
+            new chart.KLine({
+                width: window.innerWidth - 40,
+                height: 220,
+                styles: {
+                    padding: "5px"
+                },
+                container: document.querySelector('#id1week'), 
+                legend: {x: 0, y: 0},
+                priceGrid: {
+                    origin: {x: 0, y: 20},
+                    width: window.innerWidth - 80,
+                    height: 120
+                },
+                volumeGrid: {
+                    origin: {x: 0, y: 150},
+                    width: window.innerWidth - 80,
+                    height: 60
+                },
+                priceTextOffsetX: window.innerWidth - 75,
+                dataSet: {
+                    maPrices, ohlcPrices, volumes
+                }
+             })
+        }
+    </script>
+    <script>
+        function loadStockData(res) {
+            var stock = Object.keys(res)[0];
+            window.lastClosePrice = +res[stock].last_close;
+        }
+    </script>
+
+    <script>
+        function loadScript(src, cb) {
+            var script = document.createElement('script');
+            script.src = src;
+            document.querySelector('head').appendChild(script);
+            script.onload = function() {
+                cb && cb();
+            }
+        }
+
+        var now = Date.now();
+
+        var name = "腾讯控股"
+        var stock = "00700"; 
+
+        var timelineapi = "https://xueqiu.com/stock/forchart/stocklist.json";
+        var klineapi = "https://xueqiu.com/stock/forchartk/stocklist.json";
+
+        var h1 = document.createElement('h1');
+        h1.innerHTML = name + stock;
+        document.body.appendChild(h1);
+
+        loadScript('https://xueqiu.com/v4/stock/quote.json?code=' + stock + "&callback=loadStockData", function() {
+            [{
+                name: "分时",
+                type: "1d",
+                query: {
+                    one_min: 1
+                },
+                callback: loadTimeLineData,
+                api: timelineapi
+            }, {
+                name: "五日",
+                type: "5d",
+                callback: loadFiveDaysTimeLineData,
+                api: timelineapi
+            }, {
+                name: "日k",
+                type: "1day",
+                query: {
+                    begin: now - 2 * 30 * 24 * 60 * 60 * 1000,
+                    end: now
+                },
+                callback: loadKLineData,
+                api: klineapi
+            }, {
+                name: "周k",
+                type: "1week",
+                query: {
+                    begin: now - 12 * 30 * 24 * 60 * 60 * 1000,
+                    end: now
+                },
+                callback: loadWeekKLineData,
+                api: klineapi
+            }].map(item => {
+                var h2 = document.createElement('h2');
+                var div = document.createElement('div');
+                div.setAttribute('id', "id" + item.type);
+                h2.innerHTML = item.name;
+                document.body.appendChild(h2);
+                document.body.appendChild(div);
+
+                var param = Object.keys(item.query || {}).map(key => {
+                    return "&" + key + "=" + item.query[key]
+                }).join("");
+                loadScript(item.api + "?symbol=" + stock + "&period=" + item.type + "&callback=" + item.callback.name + param);
+            })
+        })
+        
+
+    </script>
+</body>
+</html>
