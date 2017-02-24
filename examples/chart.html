@@ -11,7 +11,7 @@
     <script src="../dist/charts/base.js"></script>
     <script>
         window.onload = function() {
-            const chart = new window.chart.Chart.Canvas({
+            const chart = new window.chart.Canvas({
                 width: window.innerWidth - 40,
                 height: 200,
                 container: "#app",
@@ -20,15 +20,14 @@
                 }
             });
 
-            chart.drawDashLine({
-                start: {
-                    x: 1, y:0
-                },
-                end: {
-                    x: 1, y: 160,
-                },
-                segments: [10, 5],
-                color: "red"
+            chart.drawLine({
+                points: [{
+                    x: 0, y: 80
+                }, {
+                    x: 180, y: 80
+                }],
+                color: "pink",
+                width: 5
             })
 
             chart.drawDashLine({
@@ -42,19 +41,54 @@
                 color: "blue"
             })
 
-            
-            chart.drawDashLine({
-                start: {
-                    x: 100, y:100
-                },
-                end: {
-                    x: 115, y: 100,
-                },
-                segments: [10, 5],
-                color: "black",
-                width: 10
+            chart.drawDot({
+                radius: 20,
+                color: "red"
+            }, {
+                x: 150, y: 150
             })
 
+            chart.drawCircle({
+                border: 5,
+                radius: 20,
+                color: "green"
+            }, {
+                x: 100, y: 100
+            })
+
+            chart.drawLine({
+                points: [{
+                    x: 20, y: 20
+                }, {
+                    x: 33, y: 50
+                }, {
+                    x: 70, y: 120
+                }, {
+                    x: 30, y: 190
+                }, {
+                    x: 101, y: 40
+                }, {
+                    x: 58, y: 188
+                }],
+                color: "lightgreen",
+                width: 2
+            })
+
+            chart.drawText({
+                content: "腾讯控股00700",
+                size: 30,
+                color: "purple"
+            }, {
+                x: 80, y: 120
+            })
+
+            chart.drawShape({
+                lines: [
+                    {points: [{x: 150, y:50}, {x: 180, y: 180}]},
+                    {points: [{x: 180, y:180}, {x: 120, y: 90}]},
+                ],
+                fillStyle: "cyan"
+            })
         }
 
     </script>

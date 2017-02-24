@@ -179,7 +179,9 @@ type Shape = {
     /**
      * 构成形状的线条
      */
-    lines: Line[];
+    lines: Array<{
+        points: Point[];
+    }>;
     /**
      * 填充样式, 可以是颜色值或者是渐变
      */
