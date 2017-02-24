@@ -245,8 +245,11 @@ var Canvas = function () {
             ctx.save();
             if (this.wechat) {
                 text.color && ctx.setFillStyle(text.color);
-                // text.baseline && (ctx.textBaseline = text.baseline);
-                // text.align && (ctx.textAlign = text.align);
+                var baseline = text.baseline,
+                    align = text.align;
+
+                text.baseline && (ctx.textBaseline = text.baseline);
+                text.align && (ctx.textAlign = text.align);
                 text.size && ctx.setFontSize(text.size);
             } else {
                 text.color && (ctx.fillStyle = text.color);

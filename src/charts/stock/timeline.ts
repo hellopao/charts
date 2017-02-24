@@ -1,5 +1,9 @@
 import StockChart from "./base";
 
+enum STOCK_TYPE {
+    A = 1, HK = 2, US = 3
+}
+
 interface TimeLineOptions extends StockChart.BaseOptions {
     dataSet: {
         lastClosePrice: number;
@@ -12,6 +16,7 @@ interface TimeLineOptions extends StockChart.BaseOptions {
     tradeHours?: number;
     days?: number;
     volumeTextOffsetX?: number;
+    stockType?: 1 | 2 | 3;
 }
 
 export class TimeLine extends StockChart.Base<TimeLineOptions> {
@@ -19,8 +24,8 @@ export class TimeLine extends StockChart.Base<TimeLineOptions> {
     static PRICE_LINE_COLOR = "rgb(92, 157, 214)";
     static AVG_PRICE_LINE_COLOR = "rgb(230, 160, 81)";
     static TIME_INTERVAL = 1;
-    static TRADE_HOURS = 4;
     static DAYS = 1;
+    static STOCK_TYPE = 1;
     static VOLUME_TEXT_OFFSETX = 0;
 
     timePercent: number;
@@ -43,10 +48,15 @@ export class TimeLine extends StockChart.Base<TimeLineOptions> {
     }
 
     getTimePercent() {
-        const {timeInterval = TimeLine.TIME_INTERVAL, tradeHours = TimeLine.TRADE_HOURS, days = TimeLine.DAYS} = this.options;
+        const {timeInterval = TimeLine.TIME_INTERVAL, days = TimeLine.DAYS, stockType = TimeLine.STOCK_TYPE} = this.options;
+        const TRADE_HOURS = {
+            1: 4,
+            2: 5.5,
+            3: 5.5
+        };
         const {prices} = this.options.dataSet;
 
-        return prices.length / days / (2 + tradeHours * 60 / timeInterval);
+        return prices.length / days / (2 + TRADE_HOURS[stockType] * 60 / timeInterval);
     }
 
     drawPriceText() {
@@ -223,12 +233,14 @@ export class TimeLine extends StockChart.Base<TimeLineOptions> {
 
     getTimes() {
         const {times = []} = this.options.dataSet;
-        const { days = TimeLine.DAYS, tradeHours = TimeLine.TRADE_HOURS} = this.options;
+        const { days = TimeLine.DAYS, } = this.options;
         if (days === 1) {
-            if (tradeHours === 5.5) {
+            if (STOCK_TYPE.HK) {
                 return ["9:30", "11:00", "12:00/13:00", "14:00", "16:00"];
-            } else if (tradeHours === 4) {
+            } else if (STOCK_TYPE.HK) {
                 return ["9:30", "10:30", "11:30/13:00", "14:00", "15:00"]
+            } else if (STOCK_TYPE.US) {
+                return ["22:30", "00:30", "02:30", "04:30"]
             }
         } else {
             let timeSet = {};

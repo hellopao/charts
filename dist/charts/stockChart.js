@@ -245,8 +245,11 @@ var Canvas = function () {
             ctx.save();
             if (this.wechat) {
                 text.color && ctx.setFillStyle(text.color);
-                // text.baseline && (ctx.textBaseline = text.baseline);
-                // text.align && (ctx.textAlign = text.align);
+                var baseline = text.baseline,
+                    align = text.align;
+
+                text.baseline && (ctx.textBaseline = text.baseline);
+                text.align && (ctx.textAlign = text.align);
                 text.size && ctx.setFontSize(text.size);
             } else {
                 text.color && (ctx.fillStyle = text.color);
@@ -811,6 +814,12 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var base_1 = __webpack_require__(1);
+var STOCK_TYPE;
+(function (STOCK_TYPE) {
+    STOCK_TYPE[STOCK_TYPE["A"] = 1] = "A";
+    STOCK_TYPE[STOCK_TYPE["HK"] = 2] = "HK";
+    STOCK_TYPE[STOCK_TYPE["US"] = 3] = "US";
+})(STOCK_TYPE || (STOCK_TYPE = {}));
 
 var TimeLine = function (_base_1$default$Base) {
     _inherits(TimeLine, _base_1$default$Base);
@@ -841,13 +850,19 @@ var TimeLine = function (_base_1$default$Base) {
             var _options = this.options,
                 _options$timeInterval = _options.timeInterval,
                 timeInterval = _options$timeInterval === undefined ? TimeLine.TIME_INTERVAL : _options$timeInterval,
-                _options$tradeHours = _options.tradeHours,
-                tradeHours = _options$tradeHours === undefined ? TimeLine.TRADE_HOURS : _options$tradeHours,
                 _options$days = _options.days,
-                days = _options$days === undefined ? TimeLine.DAYS : _options$days;
+                days = _options$days === undefined ? TimeLine.DAYS : _options$days,
+                _options$stockType = _options.stockType,
+                stockType = _options$stockType === undefined ? TimeLine.STOCK_TYPE : _options$stockType;
+
+            var TRADE_HOURS = {
+                1: 4,
+                2: 5.5,
+                3: 5.5
+            };
             var prices = this.options.dataSet.prices;
 
-            return prices.length / days / (2 + tradeHours * 60 / timeInterval);
+            return prices.length / days / (2 + TRADE_HOURS[stockType] * 60 / timeInterval);
         }
     }, {
         key: "drawPriceText",
@@ -1057,17 +1072,16 @@ var TimeLine = function (_base_1$default$Base) {
         value: function getTimes() {
             var _options$dataSet$time = this.options.dataSet.times,
                 times = _options$dataSet$time === undefined ? [] : _options$dataSet$time;
-            var _options5 = this.options,
-                _options5$days = _options5.days,
-                days = _options5$days === undefined ? TimeLine.DAYS : _options5$days,
-                _options5$tradeHours = _options5.tradeHours,
-                tradeHours = _options5$tradeHours === undefined ? TimeLine.TRADE_HOURS : _options5$tradeHours;
+            var _options$days3 = this.options.days,
+                days = _options$days3 === undefined ? TimeLine.DAYS : _options$days3;
 
             if (days === 1) {
-                if (tradeHours === 5.5) {
+                if (STOCK_TYPE.HK) {
                     return ["9:30", "11:00", "12:00/13:00", "14:00", "16:00"];
-                } else if (tradeHours === 4) {
+                } else if (STOCK_TYPE.HK) {
                     return ["9:30", "10:30", "11:30/13:00", "14:00", "15:00"];
+                } else if (STOCK_TYPE.US) {
+                    return ["22:30", "00:30", "02:30", "04:30"];
                 }
             } else {
                 var timeSet = {};
@@ -1123,8 +1137,8 @@ var TimeLine = function (_base_1$default$Base) {
 TimeLine.PRICE_LINE_COLOR = "rgb(92, 157, 214)";
 TimeLine.AVG_PRICE_LINE_COLOR = "rgb(230, 160, 81)";
 TimeLine.TIME_INTERVAL = 1;
-TimeLine.TRADE_HOURS = 4;
 TimeLine.DAYS = 1;
+TimeLine.STOCK_TYPE = 1;
 TimeLine.VOLUME_TEXT_OFFSETX = 0;
 exports.TimeLine = TimeLine;
 
