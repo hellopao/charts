@@ -220,52 +220,56 @@
         var klineapi = "https://xueqiu.com/stock/forchartk/stocklist.json";
 
 
-        loadScript('https://xueqiu.com/v4/stock/quote.json?code=' + stock + "&callback=loadStockData", function() {
-            [{
-                name: "分时",
-                type: "1d",
-                query: {
-                    one_min: 1
-                },
-                callback: loadTimeLineData,
-                api: timelineapi
-            }, {
-                name: "五日",
-                type: "5d",
-                callback: loadFiveDaysTimeLineData,
-                api: timelineapi
-            }, {
-                name: "日k",
-                type: "1day",
-                query: {
-                    begin: now - 2 * 30 * 24 * 60 * 60 * 1000,
-                    end: now
-                },
-                callback: loadKLineData,
-                api: klineapi
-            }, {
-                name: "周k",
-                type: "1week",
-                query: {
-                    begin: now - 12 * 30 * 24 * 60 * 60 * 1000,
-                    end: now
-                },
-                callback: loadWeekKLineData,
-                api: klineapi
-            }].map(item => {
-                var h2 = document.createElement('h2');
-                var div = document.createElement('div');
-                div.setAttribute('id', "id" + item.type);
-                h2.innerHTML = item.name;
-                document.body.appendChild(h2);
-                document.body.appendChild(div);
+        var img = new Image();
+        img.src = "https://xueqiu.com";
+        img.onload = img.onerror = () => {
+            loadScript('https://xueqiu.com/v4/stock/quote.json?code=' + stock + "&callback=loadStockData", function() {
+                [{
+                    name: "分时",
+                    type: "1d",
+                    query: {
+                        one_min: 1
+                    },
+                    callback: loadTimeLineData,
+                    api: timelineapi
+                }, {
+                    name: "五日",
+                    type: "5d",
+                    callback: loadFiveDaysTimeLineData,
+                    api: timelineapi
+                }, {
+                    name: "日k",
+                    type: "1day",
+                    query: {
+                        begin: now - 2 * 30 * 24 * 60 * 60 * 1000,
+                        end: now
+                    },
+                    callback: loadKLineData,
+                    api: klineapi
+                }, {
+                    name: "周k",
+                    type: "1week",
+                    query: {
+                        begin: now - 12 * 30 * 24 * 60 * 60 * 1000,
+                        end: now
+                    },
+                    callback: loadWeekKLineData,
+                    api: klineapi
+                }].map(item => {
+                    var h2 = document.createElement('h2');
+                    var div = document.createElement('div');
+                    div.setAttribute('id', "id" + item.type);
+                    h2.innerHTML = item.name;
+                    document.body.appendChild(h2);
+                    document.body.appendChild(div);
 
-                var param = Object.keys(item.query || {}).map(key => {
-                    return "&" + key + "=" + item.query[key]
-                }).join("");
-                loadScript(item.api + "?symbol=" + stock + "&period=" + item.type + "&callback=" + item.callback.name + param);
+                    var param = Object.keys(item.query || {}).map(key => {
+                        return "&" + key + "=" + item.query[key]
+                    }).join("");
+                    loadScript(item.api + "?symbol=" + stock + "&period=" + item.type + "&callback=" + item.callback.name + param);
+                })
             })
-        })
+        }
         
 
     </script>
