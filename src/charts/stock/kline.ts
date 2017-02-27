@@ -110,17 +110,21 @@ export class KLine extends StockChart.Base<KLineOptions> {
     }
 
     getEndsPrice() {
-        const { ohlcPrices } = this.options.dataSet;
+        const { ohlcPrices , maPrices} = this.options.dataSet;
 
         const hPrices = ohlcPrices.map(price => price.h);
         const lPrices = ohlcPrices.map(price => price.l);
 
-        const highestPrice = Math.max(...hPrices);
-        const lowestPrice = Math.min(...lPrices);
+        let highest = Math.max(...hPrices);
+        let lowest = Math.min(...lPrices);
+
+        Object.keys(maPrices).forEach(item => {
+            highest = Math.max(highest, ...maPrices[item]);
+            lowest = Math.min(lowest, ...maPrices[item]);
+        })
 
         return {
-            highest: Math.max(...hPrices),
-            lowest: Math.min(...lPrices)
+            highest, lowest
         }
     }
 

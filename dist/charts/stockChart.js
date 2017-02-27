@@ -628,7 +628,9 @@ var KLine = function (_base_1$default$Base) {
     }, {
         key: "getEndsPrice",
         value: function getEndsPrice() {
-            var ohlcPrices = this.options.dataSet.ohlcPrices;
+            var _options$dataSet = this.options.dataSet,
+                ohlcPrices = _options$dataSet.ohlcPrices,
+                maPrices = _options$dataSet.maPrices;
 
             var hPrices = ohlcPrices.map(function (price) {
                 return price.h;
@@ -636,11 +638,14 @@ var KLine = function (_base_1$default$Base) {
             var lPrices = ohlcPrices.map(function (price) {
                 return price.l;
             });
-            var highestPrice = Math.max.apply(Math, _toConsumableArray(hPrices));
-            var lowestPrice = Math.min.apply(Math, _toConsumableArray(lPrices));
+            var highest = Math.max.apply(Math, _toConsumableArray(hPrices));
+            var lowest = Math.min.apply(Math, _toConsumableArray(lPrices));
+            Object.keys(maPrices).forEach(function (item) {
+                highest = Math.max.apply(Math, [highest].concat(_toConsumableArray(maPrices[item])));
+                lowest = Math.min.apply(Math, [lowest].concat(_toConsumableArray(maPrices[item])));
+            });
             return {
-                highest: Math.max.apply(Math, _toConsumableArray(hPrices)),
-                lowest: Math.min.apply(Math, _toConsumableArray(lPrices))
+                highest: highest, lowest: lowest
             };
         }
     }, {
@@ -648,11 +653,11 @@ var KLine = function (_base_1$default$Base) {
         value: function drawMALines() {
             var _this2 = this;
 
-            var _options$dataSet = this.options.dataSet,
-                _options$dataSet$maPr = _options$dataSet.maPrices,
-                maPrices = _options$dataSet$maPr === undefined ? {} : _options$dataSet$maPr,
-                _options$dataSet$maCo = _options$dataSet.maColors,
-                maColors = _options$dataSet$maCo === undefined ? KLine.MA_COLORS : _options$dataSet$maCo;
+            var _options$dataSet2 = this.options.dataSet,
+                _options$dataSet2$maP = _options$dataSet2.maPrices,
+                maPrices = _options$dataSet2$maP === undefined ? {} : _options$dataSet2$maP,
+                _options$dataSet2$maC = _options$dataSet2.maColors,
+                maColors = _options$dataSet2$maC === undefined ? KLine.MA_COLORS : _options$dataSet2$maC;
             var priceGrid = this.options.priceGrid;
 
             var _getEndsPrice2 = this.getEndsPrice(),
@@ -681,11 +686,11 @@ var KLine = function (_base_1$default$Base) {
             var _options$global$textC = this.options.global.textColor,
                 textColor = _options$global$textC === undefined ? KLine.TEXT_COLOR : _options$global$textC;
             var priceGrid = this.options.priceGrid;
-            var _options$dataSet2 = this.options.dataSet,
-                _options$dataSet2$maP = _options$dataSet2.maPrices,
-                maPrices = _options$dataSet2$maP === undefined ? {} : _options$dataSet2$maP,
-                _options$dataSet2$maC = _options$dataSet2.maColors,
-                maColors = _options$dataSet2$maC === undefined ? KLine.MA_COLORS : _options$dataSet2$maC;
+            var _options$dataSet3 = this.options.dataSet,
+                _options$dataSet3$maP = _options$dataSet3.maPrices,
+                maPrices = _options$dataSet3$maP === undefined ? {} : _options$dataSet3$maP,
+                _options$dataSet3$maC = _options$dataSet3.maColors,
+                maColors = _options$dataSet3$maC === undefined ? KLine.MA_COLORS : _options$dataSet3$maC;
             var _options$legend = this.options.legend,
                 legend = _options$legend === undefined ? { x: 0, y: 0 } : _options$legend;
 
@@ -720,9 +725,9 @@ var KLine = function (_base_1$default$Base) {
                 volumeGrid = _options.volumeGrid,
                 _options$priceTextOff = _options.priceTextOffsetX,
                 priceTextOffsetX = _options$priceTextOff === undefined ? KLine.AXIS_X : _options$priceTextOff;
-            var _options$dataSet3 = this.options.dataSet,
-                ohlcPrices = _options$dataSet3.ohlcPrices,
-                volumes = _options$dataSet3.volumes;
+            var _options$dataSet4 = this.options.dataSet,
+                ohlcPrices = _options$dataSet4.ohlcPrices,
+                volumes = _options$dataSet4.volumes;
 
             var _getEndsPrice3 = this.getEndsPrice(),
                 highest = _getEndsPrice3.highest,
@@ -758,9 +763,9 @@ var KLine = function (_base_1$default$Base) {
         value: function drawVolumeLines() {
             var _this4 = this;
 
-            var _options$dataSet4 = this.options.dataSet,
-                volumes = _options$dataSet4.volumes,
-                ohlcPrices = _options$dataSet4.ohlcPrices;
+            var _options$dataSet5 = this.options.dataSet,
+                volumes = _options$dataSet5.volumes,
+                ohlcPrices = _options$dataSet5.ohlcPrices;
             var volumeGrid = this.options.volumeGrid;
             var _options$global$candl2 = this.options.global.candleStickWidth,
                 candleStickWidth = _options$global$candl2 === undefined ? KLine.CANDLE_STICK_WIDTH : _options$global$candl2;
@@ -1072,13 +1077,16 @@ var TimeLine = function (_base_1$default$Base) {
         value: function getTimes() {
             var _options$dataSet$time = this.options.dataSet.times,
                 times = _options$dataSet$time === undefined ? [] : _options$dataSet$time;
-            var _options$days3 = this.options.days,
-                days = _options$days3 === undefined ? TimeLine.DAYS : _options$days3;
+            var _options5 = this.options,
+                _options5$days = _options5.days,
+                days = _options5$days === undefined ? TimeLine.DAYS : _options5$days,
+                _options5$stockType = _options5.stockType,
+                stockType = _options5$stockType === undefined ? STOCK_TYPE.A : _options5$stockType;
 
             if (days === 1) {
-                if (STOCK_TYPE.HK) {
+                if (stockType === STOCK_TYPE.HK) {
                     return ["9:30", "11:00", "12:00/13:00", "14:00", "16:00"];
-                } else if (STOCK_TYPE.HK) {
+                } else if (stockType === STOCK_TYPE.A) {
                     return ["9:30", "10:30", "11:30/13:00", "14:00", "15:00"];
                 } else if (STOCK_TYPE.US) {
                     return ["22:30", "00:30", "02:30", "04:30"];

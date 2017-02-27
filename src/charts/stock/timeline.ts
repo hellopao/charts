@@ -233,11 +233,11 @@ export class TimeLine extends StockChart.Base<TimeLineOptions> {
 
     getTimes() {
         const {times = []} = this.options.dataSet;
-        const { days = TimeLine.DAYS, } = this.options;
+        const { days = TimeLine.DAYS, stockType = STOCK_TYPE.A } = this.options;
         if (days === 1) {
-            if (STOCK_TYPE.HK) {
+            if (stockType === STOCK_TYPE.HK) {
                 return ["9:30", "11:00", "12:00/13:00", "14:00", "16:00"];
-            } else if (STOCK_TYPE.HK) {
+            } else if (stockType === STOCK_TYPE.A) {
                 return ["9:30", "10:30", "11:30/13:00", "14:00", "15:00"]
             } else if (STOCK_TYPE.US) {
                 return ["22:30", "00:30", "02:30", "04:30"]

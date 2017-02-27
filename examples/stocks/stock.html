@@ -8,6 +8,13 @@
 </head>
 <body>
     <script src="../../dist/charts/stockChart.js"></script>
+    <script>    
+        function getStockType(code) {
+            if (/^(sz|sh)\d{6}$/.test(code)) return 1;
+            if (/^\d{6}$/.test(code)) return 2;
+            return 3;
+        }
+    </script>
     <script>
         // 分时
         function loadTimeLineData(res) {
@@ -27,7 +34,7 @@
                 container: document.querySelector('#id1d'), 
                 priceTextOffsetX: 0,
                 volumeTextOffsetX: window.innerWidth - 80,
-                stockType: 2,
+                stockType: getStockType(stock),
                 priceGrid: {
                     origin: {x: 40, y: 0},
                     width: window.innerWidth - 80,
@@ -63,7 +70,7 @@
                 container: document.querySelector('#id5d'), 
                 priceTextOffsetX: 0,
                 volumeTextOffsetX: window.innerWidth - 80,
-                stockType: 2,
+                stockType: getStockType(stock),
                 days: 5,
                 timeInterval: 10,
                 priceGrid: {
@@ -177,8 +184,12 @@
     </script>
     <script>
         function loadStockData(res) {
-            var stock = Object.keys(res)[0];
-            window.lastClosePrice = +res[stock].last_close;
+            var code = Object.keys(res)[0];
+            var stock = res[code];
+            window.lastClosePrice = +stock.last_close;
+            var h1 = document.createElement('h1');
+            h1.innerHTML = stock.name + code;
+            document.body.insertAdjacentElement('afterBegin', h1);
         }
     </script>
 
@@ -192,17 +203,22 @@
             }
         }
 
+        function query(key) {
+            var obj = {};
+            location.href.replace(/[?&]([^=]+)=([^&#]+)/g, (str, key, value) => {
+                obj[key] = value;
+            });
+
+            return obj[key] || "";
+        }        
         var now = Date.now();
 
-        var name = "腾讯控股"
-        var stock = "00700"; 
+        var name = "";
+        var stock = query('code') || "sz000801"; 
 
         var timelineapi = "https://xueqiu.com/stock/forchart/stocklist.json";
         var klineapi = "https://xueqiu.com/stock/forchartk/stocklist.json";
 
-        var h1 = document.createElement('h1');
-        h1.innerHTML = name + stock;
-        document.body.appendChild(h1);
 
         loadScript('https://xueqiu.com/v4/stock/quote.json?code=' + stock + "&callback=loadStockData", function() {
             [{
